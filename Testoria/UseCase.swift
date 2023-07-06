@@ -5,6 +5,7 @@ enum UseCaseError: Error, Equatable {
     case recurringSuiteName(String)
     case recurringScenarioName(suiteName: String, scenarioName: String)
     case suiteNotFound(Suite.Id)
+    case scenarioNotFound(Scenario.Id)
 }
 
 final class UseCase {
@@ -18,18 +19,24 @@ final class UseCase {
         self.generateId = generateId
     }
     
-    func addSuite(with name: String) throws -> Suite.Id {
+    @discardableResult
+    func addSuite(
+        with name: String
+    ) throws -> Suite.Id {
         if suites.contains(where: { $0.name == name }) {
             throw UseCaseError.recurringSuiteName(name)
         }
-        
         let id: Suite.Id = .id(generateId())
         let newSuite = Suite(id, name: name)
         suites.append(newSuite)
         return id
     }
     
-    func addScenario(with name: String, for suiteId: Suite.Id) throws -> Scenario.Id {
+    @discardableResult
+    func addScenario(
+        with name: String,
+        for suiteId: Suite.Id
+    ) throws -> Scenario.Id {
         guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
             throw UseCaseError.suiteNotFound(suiteId)
         }
@@ -41,6 +48,33 @@ final class UseCase {
         suite.scenario.append(Scenario(id, name: name))
         suites[suiteIndex] = suite
         return id
+    }
+    
+    func renameSuite(
+        with newName: String,
+        for suiteId: Suite.Id
+    ) throws {
+        guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
+            throw UseCaseError.suiteNotFound(suiteId)
+        }
+        var suite = suites[suiteIndex]
+        suite.name = newName
+        suites[suiteIndex] = suite
+    }
+    
+    func renameScenario(
+        with newName: String,
+        for scenario: Scenario.Id
+    ) throws {
+        guard let suiteIndex = suites.firstIndex(where: { $0.id == .id(scenario.suiteId) }),
+              let scenarioIndex = suites[suiteIndex].scenario.firstIndex(where: { $0.id == scenario }) else {
+            throw UseCaseError.scenarioNotFound(scenario)
+        }
+        var suite = suites[suiteIndex]
+        var scenario = suite.scenario[scenarioIndex]
+        scenario.name = newName
+        suite.scenario[scenarioIndex] = scenario
+        suites[suiteIndex] = suite
     }
     
     func buildSuites() -> [Suite] {
