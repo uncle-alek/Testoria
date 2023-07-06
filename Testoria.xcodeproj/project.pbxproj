@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C42808F2A5676CD00F288D6 /* CustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = 3C42808E2A5676CD00F288D6 /* CustomDump */; };
 		3C5979242A54124E002255E2 /* TestoriaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979232A54124E002255E2 /* TestoriaApp.swift */; };
 		3C5979262A54124E002255E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979252A54124E002255E2 /* ContentView.swift */; };
 		3C5979282A54124F002255E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C5979272A54124F002255E2 /* Assets.xcassets */; };
 		3C59792B2A54124F002255E2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C59792A2A54124F002255E2 /* Preview Assets.xcassets */; };
-		3C5979362A54124F002255E2 /* TestoriaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979352A54124F002255E2 /* TestoriaTests.swift */; };
+		3C5979362A54124F002255E2 /* UseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979352A54124F002255E2 /* UseCaseTests.swift */; };
 		3C5979402A54124F002255E2 /* TestoriaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C59793F2A54124F002255E2 /* TestoriaUITests.swift */; };
 		3C5979422A54124F002255E2 /* TestoriaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979412A54124F002255E2 /* TestoriaUITestsLaunchTests.swift */; };
+		3C597B9B2A551B4E002255E2 /* UseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C597B9A2A551B4E002255E2 /* UseCase.swift */; };
+		3C597B9C2A551B51002255E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C5979252A54124E002255E2 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,10 +44,11 @@
 		3C59792A2A54124F002255E2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3C59792C2A54124F002255E2 /* Testoria.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Testoria.entitlements; sourceTree = "<group>"; };
 		3C5979312A54124F002255E2 /* TestoriaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestoriaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C5979352A54124F002255E2 /* TestoriaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestoriaTests.swift; sourceTree = "<group>"; };
+		3C5979352A54124F002255E2 /* UseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseCaseTests.swift; sourceTree = "<group>"; };
 		3C59793B2A54124F002255E2 /* TestoriaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestoriaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C59793F2A54124F002255E2 /* TestoriaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestoriaUITests.swift; sourceTree = "<group>"; };
 		3C5979412A54124F002255E2 /* TestoriaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestoriaUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3C597B9A2A551B4E002255E2 /* UseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UseCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C42808F2A5676CD00F288D6 /* CustomDump in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +102,7 @@
 			children = (
 				3C5979232A54124E002255E2 /* TestoriaApp.swift */,
 				3C5979252A54124E002255E2 /* ContentView.swift */,
+				3C597B9A2A551B4E002255E2 /* UseCase.swift */,
 				3C5979272A54124F002255E2 /* Assets.xcassets */,
 				3C59792C2A54124F002255E2 /* Testoria.entitlements */,
 				3C5979292A54124F002255E2 /* Preview Content */,
@@ -115,7 +121,7 @@
 		3C5979342A54124F002255E2 /* TestoriaTests */ = {
 			isa = PBXGroup;
 			children = (
-				3C5979352A54124F002255E2 /* TestoriaTests.swift */,
+				3C5979352A54124F002255E2 /* UseCaseTests.swift */,
 			);
 			path = TestoriaTests;
 			sourceTree = "<group>";
@@ -145,6 +151,9 @@
 			dependencies = (
 			);
 			name = Testoria;
+			packageProductDependencies = (
+				3C42808E2A5676CD00F288D6 /* CustomDump */,
+			);
 			productName = Testoria;
 			productReference = 3C5979202A54124E002255E2 /* Testoria.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +226,9 @@
 				Base,
 			);
 			mainGroup = 3C5979172A54124E002255E2;
+			packageReferences = (
+				3C42808D2A5676CD00F288D6 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
+			);
 			productRefGroup = 3C5979212A54124E002255E2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -259,6 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C597B9B2A551B4E002255E2 /* UseCase.swift in Sources */,
 				3C5979262A54124E002255E2 /* ContentView.swift in Sources */,
 				3C5979242A54124E002255E2 /* TestoriaApp.swift in Sources */,
 			);
@@ -268,7 +281,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C5979362A54124F002255E2 /* TestoriaTests.swift in Sources */,
+				3C597B9C2A551B51002255E2 /* ContentView.swift in Sources */,
+				3C5979362A54124F002255E2 /* UseCaseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,6 +582,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3C42808D2A5676CD00F288D6 /* XCRemoteSwiftPackageReference "swift-custom-dump" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-custom-dump";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3C42808E2A5676CD00F288D6 /* CustomDump */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C42808D2A5676CD00F288D6 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
+			productName = CustomDump;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3C5979182A54124E002255E2 /* Project object */;
 }

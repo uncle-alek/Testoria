@@ -1,10 +1,3 @@
-//
-//  TestoriaUITests.swift
-//  TestoriaUITests
-//
-//  Created by Aleksey Yakimenko on 4/7/23.
-//
-
 import XCTest
 
 final class TestoriaUITests: XCTestCase {
