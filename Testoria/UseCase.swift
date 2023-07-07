@@ -40,13 +40,12 @@ final class UseCase {
         guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
             throw UseCaseError.suiteNotFound(suiteId)
         }
-        var suite = suites[suiteIndex]
-        if suite.scenario.contains(where: { $0.name == name }) {
+        let suite = suites[suiteIndex]
+        if suites[suiteIndex].scenario.contains(where: { $0.name == name }) {
             throw UseCaseError.recurringScenarioName(suiteName: suite.name, scenarioName: name)
         }
         let id: Scenario.Id = .id(suite.id.value, generateId())
-        suite.scenario.append(Scenario(id, name: name))
-        suites[suiteIndex] = suite
+        suites[suiteIndex].scenario.append(Scenario(id, name: name))
         return id
     }
     
@@ -57,9 +56,7 @@ final class UseCase {
         guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
             throw UseCaseError.suiteNotFound(suiteId)
         }
-        var suite = suites[suiteIndex]
-        suite.name = newName
-        suites[suiteIndex] = suite
+        suites[suiteIndex].name = newName
     }
     
     func renameScenario(
@@ -70,11 +67,7 @@ final class UseCase {
               let scenarioIndex = suites[suiteIndex].scenario.firstIndex(where: { $0.id == scenario }) else {
             throw UseCaseError.scenarioNotFound(scenario)
         }
-        var suite = suites[suiteIndex]
-        var scenario = suite.scenario[scenarioIndex]
-        scenario.name = newName
-        suite.scenario[scenarioIndex] = scenario
-        suites[suiteIndex] = suite
+        suites[suiteIndex].scenario[scenarioIndex].name = newName
     }
     
     func buildSuites() -> [Suite] {

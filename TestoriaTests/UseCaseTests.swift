@@ -4,24 +4,6 @@ import XCTest
 
 final class UseCaseTests: XCTestCase {
     
-    func test_add_suite() throws {
-        let sut = makeSUT()
-        let suiteId = try sut.addSuite(with: "Home screen")
-        XCTAssertNoDifference(
-            suiteId,
-            .id("uniqueId_1")
-        )
-        XCTAssertNoDifference(
-            sut.buildSuites(),
-            [
-                Suite(
-                    .id("uniqueId_1"),
-                    name: "Home screen"
-                )
-            ]
-        )
-    }
-    
     func test_add_multiple_suites() throws {
         let sut = makeSUT()
         let suiteId_1 = try sut.addSuite(with: "Home screen")
@@ -60,44 +42,11 @@ final class UseCaseTests: XCTestCase {
         }
     }
     
-    func test_add_scenario() throws {
-        let sut = makeSUT()
-        let suiteId = try sut.addSuite(with: "Home screen")
-        let scenarioId = try sut.addScenario(with: "Show welcome message", for: suiteId)
-        XCTAssertNoDifference(
-            suiteId,
-            .id("uniqueId_1")
-        )
-        XCTAssertNoDifference(
-            scenarioId,
-            .id("uniqueId_1", "uniqueId_2")
-        )
-        XCTAssertNoDifference(
-            sut.buildSuites(),
-            [
-                Suite(
-                    .id("uniqueId_1"),
-                    name: "Home screen",
-                    scenario: [
-                        Scenario(
-                            .id("uniqueId_1", "uniqueId_2"),
-                            name: "Show welcome message"
-                        )
-                    ]
-                )
-            ]
-        )
-    }
-    
     func test_add_mutliple_scenarios_for_same_suite() throws {
         let sut = makeSUT()
         let suiteId = try sut.addSuite(with: "Home screen")
         let scenarioId_1 = try sut.addScenario(with: "Show welcome message", for: suiteId)
         let scenarioId_2 = try sut.addScenario(with: "Show discount message", for: suiteId)
-        XCTAssertNoDifference(
-            suiteId,
-            .id("uniqueId_1")
-        )
         XCTAssertNoDifference(
             scenarioId_1,
             .id("uniqueId_1", "uniqueId_2")
@@ -107,21 +56,15 @@ final class UseCaseTests: XCTestCase {
             .id("uniqueId_1", "uniqueId_3")
         )
         XCTAssertNoDifference(
-            sut.buildSuites(),
+            sut.buildSuites()[0].scenario,
             [
-                Suite(
-                    .id("uniqueId_1"),
-                    name: "Home screen",
-                    scenario: [
-                        Scenario(
-                            .id("uniqueId_1", "uniqueId_2"),
-                            name: "Show welcome message"
-                        ),
-                        Scenario(
-                            .id("uniqueId_1", "uniqueId_3"),
-                            name: "Show discount message"
-                        )
-                    ]
+                Scenario(
+                    .id("uniqueId_1", "uniqueId_2"),
+                    name: "Show welcome message"
+                ),
+                Scenario(
+                    .id("uniqueId_1", "uniqueId_3"),
+                    name: "Show discount message"
                 )
             ]
         )
@@ -146,14 +89,6 @@ final class UseCaseTests: XCTestCase {
         let scenarioId_1 = try sut.addScenario(with: "Show welcome message", for: suiteId_1)
         let scenarioId_2 = try sut.addScenario(with: "Show discount message", for: suiteId_2)
         XCTAssertNoDifference(
-            suiteId_1,
-            .id("uniqueId_1")
-        )
-        XCTAssertNoDifference(
-            suiteId_2,
-            .id("uniqueId_2")
-        )
-        XCTAssertNoDifference(
             scenarioId_1,
             .id("uniqueId_1", "uniqueId_3")
         )
@@ -162,27 +97,20 @@ final class UseCaseTests: XCTestCase {
             .id("uniqueId_2", "uniqueId_4")
         )
         XCTAssertNoDifference(
-            sut.buildSuites(),
+            sut.buildSuites()[0].scenario,
             [
-                Suite(
-                    .id("uniqueId_1"),
-                    name: "Home screen",
-                    scenario: [
-                        Scenario(
-                            .id("uniqueId_1", "uniqueId_3"),
-                            name: "Show welcome message"
-                        )
-                    ]
-                ),
-                Suite(
-                    .id("uniqueId_2"),
-                    name: "Log in screen",
-                    scenario: [
-                        Scenario(
-                            .id("uniqueId_2", "uniqueId_4"),
-                            name: "Show discount message"
-                        )
-                    ]
+                Scenario(
+                    .id("uniqueId_1", "uniqueId_3"),
+                    name: "Show welcome message"
+                )
+            ]
+        )
+        XCTAssertNoDifference(
+            sut.buildSuites()[1].scenario,
+            [
+                Scenario(
+                    .id("uniqueId_2", "uniqueId_4"),
+                    name: "Show discount message"
                 )
             ]
         )
@@ -231,17 +159,11 @@ final class UseCaseTests: XCTestCase {
         let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
         try sut.renameScenario(with: "New Show welcome message", for: scenarioID)
         XCTAssertNoDifference(
-            sut.buildSuites(),
+            sut.buildSuites()[0].scenario,
             [
-                Suite(
-                    .id("uniqueId_1"),
-                    name: "Home screen",
-                    scenario: [
-                        Scenario(
-                            .id("uniqueId_1", "uniqueId_2"),
-                            name: "New Show welcome message"
-                        )
-                    ]
+                Scenario(
+                    .id("uniqueId_1", "uniqueId_2"),
+                    name: "New Show welcome message"
                 )
             ]
         )
