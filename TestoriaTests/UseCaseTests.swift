@@ -37,8 +37,8 @@ final class UseCaseTests: XCTestCase {
         XCTAssertThrowsError(try sut.addSuite(with: "Home screen")) {
             XCTAssertNoDifference(
                 $0 as? UseCaseError,
-                .recurringSuiteName("Home screen"))
-            
+                .recurringSuiteName("Home screen")
+            )
         }
     }
     
@@ -56,7 +56,7 @@ final class UseCaseTests: XCTestCase {
             .id("uniqueId_1", "uniqueId_3")
         )
         XCTAssertNoDifference(
-            sut.buildSuites()[0].scenario,
+            sut.buildSuites()[0].scenarios,
             [
                 Scenario(
                     .id("uniqueId_1", "uniqueId_2"),
@@ -77,8 +77,8 @@ final class UseCaseTests: XCTestCase {
         XCTAssertThrowsError(_ = try sut.addScenario(with: "Show welcome message" , for: suiteId)) {
             XCTAssertNoDifference(
                 $0 as? UseCaseError,
-                .recurringScenarioName(suiteName: "Home screen", scenarioName: "Show welcome message"))
-            
+                .recurringScenarioName(suiteName: "Home screen", scenarioName: "Show welcome message")
+            )
         }
     }
     
@@ -97,7 +97,7 @@ final class UseCaseTests: XCTestCase {
             .id("uniqueId_2", "uniqueId_4")
         )
         XCTAssertNoDifference(
-            sut.buildSuites()[0].scenario,
+            sut.buildSuites()[0].scenarios,
             [
                 Scenario(
                     .id("uniqueId_1", "uniqueId_3"),
@@ -106,7 +106,7 @@ final class UseCaseTests: XCTestCase {
             ]
         )
         XCTAssertNoDifference(
-            sut.buildSuites()[1].scenario,
+            sut.buildSuites()[1].scenarios,
             [
                 Scenario(
                     .id("uniqueId_2", "uniqueId_4"),
@@ -159,7 +159,7 @@ final class UseCaseTests: XCTestCase {
         let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
         try sut.renameScenario(with: "New Show welcome message", for: scenarioID)
         XCTAssertNoDifference(
-            sut.buildSuites()[0].scenario,
+            sut.buildSuites()[0].scenarios,
             [
                 Scenario(
                     .id("uniqueId_1", "uniqueId_2"),
@@ -186,6 +186,74 @@ final class UseCaseTests: XCTestCase {
         let suiteId = try sut.addSuite(with: "Home screen")
         let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
         XCTAssertThrowsError(try sut.renameScenario(with: "New Show welcome message", for: .id(scenarioID.suiteId , "wrongScenarioId"))) {
+            XCTAssertNoDifference(
+                $0 as? UseCaseError,
+                .scenarioNotFound(.id("uniqueId_1", "wrongScenarioId"))
+            )
+        }
+    }
+    
+    func test_delete_suite() throws {
+        let sut = makeSUT()
+        let suiteId_1 = try sut.addSuite(with: "Home screen")
+        try sut.addSuite(with: "Log in screen")
+        try sut.deleteSuite(for: suiteId_1)
+        XCTAssertNoDifference(
+            sut.buildSuites(),
+            [
+                Suite(
+                    .id("uniqueId_2"),
+                    name: "Log in screen"
+                )
+            ]
+        )
+    }
+    
+    func test_delete_suite_with_wrong_suiteId() throws {
+        let sut = makeSUT()
+        try sut.addSuite(with: "Home screen")
+        XCTAssertThrowsError(try sut.deleteSuite(for: .id("wrongId"))) {
+            XCTAssertNoDifference(
+                $0 as? UseCaseError,
+                .suiteNotFound(.id("wrongId"))
+            )
+        }
+    }
+    
+    func test_delete_scenario() throws {
+        let sut = makeSUT()
+        let suiteId = try sut.addSuite(with: "Home screen")
+        try sut.addScenario(with: "Show welcome message", for: suiteId)
+        let scenarioId_2 = try sut.addScenario(with: "Show discount message", for: suiteId)
+        try sut.deleteScenario(for: scenarioId_2)
+        XCTAssertNoDifference(
+            sut.buildSuites()[0].scenarios,
+            [
+                Scenario(
+                    .id("uniqueId_1", "uniqueId_2"),
+                    name: "Show welcome message"
+                )
+            ]
+        )
+    }
+    
+    func test_delete_scenario_with_wrong_suiteId() throws {
+        let sut = makeSUT()
+        let suiteId = try sut.addSuite(with: "Home screen")
+        let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
+        XCTAssertThrowsError(try sut.deleteScenario(for: .id("wrongSuiteId", scenarioID.value))) {
+            XCTAssertNoDifference(
+                $0 as? UseCaseError,
+                .scenarioNotFound(.id("wrongSuiteId", "uniqueId_2"))
+            )
+        }
+    }
+    
+    func test_delete_scenario_with_wrong_scenarioId() throws {
+        let sut = makeSUT()
+        let suiteId = try sut.addSuite(with: "Home screen")
+        let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
+        XCTAssertThrowsError(try sut.deleteScenario(for: .id(scenarioID.suiteId , "wrongScenarioId"))) {
             XCTAssertNoDifference(
                 $0 as? UseCaseError,
                 .scenarioNotFound(.id("uniqueId_1", "wrongScenarioId"))

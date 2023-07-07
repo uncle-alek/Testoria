@@ -23,7 +23,7 @@ final class UseCase {
     func addSuite(
         with name: String
     ) throws -> Suite.Id {
-        if suites.contains(where: { $0.name == name }) {
+        if isSuiteExist(with: name) {
             throw UseCaseError.recurringSuiteName(name)
         }
         let id: Suite.Id = .id(generateId())
@@ -37,15 +37,15 @@ final class UseCase {
         with name: String,
         for suiteId: Suite.Id
     ) throws -> Scenario.Id {
-        guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
+        guard let suiteIndex = suiteIndex(for: suiteId) else {
             throw UseCaseError.suiteNotFound(suiteId)
         }
         let suite = suites[suiteIndex]
-        if suites[suiteIndex].scenario.contains(where: { $0.name == name }) {
+        if isScenarioExist(with: name, for: suite) {
             throw UseCaseError.recurringScenarioName(suiteName: suite.name, scenarioName: name)
         }
         let id: Scenario.Id = .id(suite.id.value, generateId())
-        suites[suiteIndex].scenario.append(Scenario(id, name: name))
+        suites[suiteIndex].scenarios.append(Scenario(id, name: name))
         return id
     }
     
@@ -53,25 +53,74 @@ final class UseCase {
         with newName: String,
         for suiteId: Suite.Id
     ) throws {
-        guard let suiteIndex = suites.firstIndex(where: { $0.id == suiteId }) else {
+        guard let index = suiteIndex(for: suiteId) else {
             throw UseCaseError.suiteNotFound(suiteId)
         }
-        suites[suiteIndex].name = newName
+        suites[index].name = newName
     }
     
     func renameScenario(
         with newName: String,
-        for scenario: Scenario.Id
+        for scenarioId: Scenario.Id
     ) throws {
-        guard let suiteIndex = suites.firstIndex(where: { $0.id == .id(scenario.suiteId) }),
-              let scenarioIndex = suites[suiteIndex].scenario.firstIndex(where: { $0.id == scenario }) else {
-            throw UseCaseError.scenarioNotFound(scenario)
+        guard let index = scenarioIndex(for: scenarioId) else {
+            throw UseCaseError.scenarioNotFound(scenarioId)
         }
-        suites[suiteIndex].scenario[scenarioIndex].name = newName
+        suites[index.suiteIndex].scenarios[index.scenarioIndex].name = newName
+    }
+    
+    func deleteSuite(
+        for suiteId: Suite.Id
+    ) throws {
+        guard let index = suiteIndex(for: suiteId) else {
+            throw UseCaseError.suiteNotFound(suiteId)
+        }
+        suites.remove(at: index)
+    }
+    
+    func deleteScenario(
+        for scenarioId: Scenario.Id
+    ) throws {
+        guard let index = scenarioIndex(for: scenarioId) else {
+            throw UseCaseError.scenarioNotFound(scenarioId)
+        }
+        suites[index.suiteIndex].scenarios.remove(at: index.scenarioIndex)
     }
     
     func buildSuites() -> [Suite] {
         suites
+    }
+}
+
+private extension UseCase {
+    
+    func isSuiteExist(
+        with name: String
+    ) -> Bool {
+        return suites.contains(where: { $0.name == name })
+    }
+    
+    func suiteIndex(
+        for suiteId: Suite.Id
+    ) -> Int? {
+        return suites.firstIndex(where: { $0.id == suiteId })
+    }
+    
+    func isScenarioExist(
+        with name: String,
+        for suite: Suite
+    ) -> Bool {
+        return suite.scenarios.contains(where: { $0.name == name })
+    }
+    
+    func scenarioIndex(
+        for scenarioId: Scenario.Id
+    ) -> (suiteIndex: Int, scenarioIndex: Int)? {
+        guard let suiteIndex = suiteIndex(for: .id(scenarioId.suiteId)),
+           let scenarioIndex = suites[suiteIndex].scenarios.firstIndex(where: { $0.id == scenarioId }) else {
+            return nil
+        }
+        return (suiteIndex, scenarioIndex)
     }
 }
 
@@ -88,16 +137,16 @@ struct Suite: Equatable {
     
     var id: Id
     var name: String
-    var scenario: [Scenario]
+    var scenarios: [Scenario]
     
     init(
         _ id: Id,
         name: String,
-        scenario: [Scenario] = []
+        scenarios: [Scenario] = []
     ) {
         self.id = id
         self.name = name
-        self.scenario = scenario
+        self.scenarios = scenarios
     }
 }
 
