@@ -52,6 +52,9 @@ final class UseCase {
         with newName: String,
         for suiteId: Suite.Id
     ) throws {
+        if isSuiteExist(with: newName) {
+            throw UseCaseError.recurringSuiteName(newName)
+        }
         let index = suiteIndex(for: suiteId)
         suites[index].name = newName
     }
@@ -60,20 +63,25 @@ final class UseCase {
         with newName: String,
         for scenarioId: Scenario.Id
     ) throws {
+        let suiteIndex = suiteIndex(for: .id(scenarioId.suiteId))
+        let suite = suites[suiteIndex]
+        if isScenarioExist(with: newName, for: suite) {
+            throw UseCaseError.recurringScenarioName(suiteName: suite.name, scenarioName: newName)
+        }
         let index = scenarioIndex(for: scenarioId)
         suites[index.suiteIndex].scenarios[index.scenarioIndex].name = newName
     }
     
     func deleteSuite(
         for suiteId: Suite.Id
-    ) throws {
+    ) {
         let index = suiteIndex(for: suiteId)
         suites.remove(at: index)
     }
     
     func deleteScenario(
         for scenarioId: Scenario.Id
-    ) throws {
+    ) {
         let index = scenarioIndex(for: scenarioId)
         suites[index.suiteIndex].scenarios.remove(at: index.scenarioIndex)
     }
@@ -82,7 +90,7 @@ final class UseCase {
         with action: Action,
         and element: Element,
         for scenarioId: Scenario.Id
-    ) throws {
+    ) {
         let index = scenarioIndex(for: scenarioId)
         let step = Step(action: action, element: element)
         suites[index.suiteIndex].scenarios[index.scenarioIndex].steps.append(step)

@@ -130,6 +130,18 @@ final class UseCaseTests: XCTestCase {
             ]
         )
     }
+    
+    func test_rename_suite_with_recurring_name() throws {
+        let sut = makeSUT()
+        let suiteId = try sut.addSuite(with: "Home screen")
+        try sut.addSuite(with: "New Home screen")
+        XCTAssertThrowsError(try sut.renameSuite(with: "New Home screen", for: suiteId)) {
+            XCTAssertNoDifference(
+                $0 as? UseCaseError,
+                .recurringSuiteName("New Home screen")
+            )
+        }
+    }
    
     func test_rename_scenario() throws {
         let sut = makeSUT()
@@ -147,11 +159,24 @@ final class UseCaseTests: XCTestCase {
         )
     }
     
+    func test_rename_scenario_with_recurring_name() throws {
+        let sut = makeSUT()
+        let suiteId = try sut.addSuite(with: "Home screen")
+        let scenarioID = try sut.addScenario(with: "Show welcome message", for: suiteId)
+        try sut.addScenario(with: "New Show welcome message", for: suiteId)
+        XCTAssertThrowsError(try sut.renameScenario(with: "New Show welcome message", for: scenarioID)) {
+            XCTAssertNoDifference(
+                $0 as? UseCaseError,
+                .recurringScenarioName(suiteName: "Home screen", scenarioName: "New Show welcome message")
+            )
+        }
+    }
+    
     func test_delete_suite() throws {
         let sut = makeSUT()
         let suiteId_1 = try sut.addSuite(with: "Home screen")
         try sut.addSuite(with: "Log in screen")
-        try sut.deleteSuite(for: suiteId_1)
+        sut.deleteSuite(for: suiteId_1)
         XCTAssertNoDifference(
             sut.buildSuites(),
             [
@@ -168,7 +193,7 @@ final class UseCaseTests: XCTestCase {
         let suiteId = try sut.addSuite(with: "Home screen")
         try sut.addScenario(with: "Show welcome message", for: suiteId)
         let scenarioId_2 = try sut.addScenario(with: "Show discount message", for: suiteId)
-        try sut.deleteScenario(for: scenarioId_2)
+        sut.deleteScenario(for: scenarioId_2)
         XCTAssertNoDifference(
             sut.buildSuites()[0].scenarios,
             [
@@ -224,8 +249,8 @@ final class UseCaseTests: XCTestCase {
         let scenarioId = try sut.addScenario(with: "Show welcome message", for: suiteId)
         let actions = sut.getAvailableActions()
         let elements = sut.getAvailableElements()
-        try sut.addStep(with: actions[0], and: elements[0], for: scenarioId)
-        try sut.addStep(with: actions[1], and: elements[1], for: scenarioId)
+        sut.addStep(with: actions[0], and: elements[0], for: scenarioId)
+        sut.addStep(with: actions[1], and: elements[1], for: scenarioId)
         XCTAssertNoDifference(
             sut.buildSuites()[0].scenarios[0].steps,
             [
