@@ -11,11 +11,14 @@ enum UseCaseError: Error, Equatable {
 final class UseCase {
     
     private var suites: [Suite] = []
+    private let elements: [Element]
     private let generateId: () -> String
     
     init(
+        elements: [Element],
         generateId: @escaping () -> String = { UUID().uuidString }
     ) {
+        self.elements = elements
         self.generateId = generateId
     }
     
@@ -87,8 +90,16 @@ final class UseCase {
         suites[index.suiteIndex].scenarios.remove(at: index.scenarioIndex)
     }
     
+    func getAvailableActions() -> [Action] {
+        return Action.allCases
+    }
+    
+    func getAvailableElements() -> [Element] {
+        return elements
+    }
+    
     func buildSuites() -> [Suite] {
-        suites
+        return suites
     }
 }
 
@@ -131,7 +142,7 @@ struct Suite: Equatable {
         static func id(
             _ value: String
         ) -> Id {
-            Id(value: value)
+            return Id(value: value)
         }
     }
     
@@ -159,7 +170,7 @@ struct Scenario: Equatable {
             _ suiteId: String,
             _ value: String
         ) -> Id {
-            Id(suiteId: suiteId, value: value)
+            return Id(suiteId: suiteId, value: value)
         }
     }
     
@@ -173,4 +184,24 @@ struct Scenario: Equatable {
         self.id = id
         self.name = name
     }
+}
+
+enum Action: CaseIterable, Equatable {
+    case tap
+    case swipeLeft
+    case swipeRight
+    case swipeUp
+    case swipeDown
+    case typeText
+}
+
+struct Element: Equatable {
+    enum `Type`: Equatable {
+        case view
+        case button
+    }
+    
+    let name: String
+    let id: String
+    let type: `Type`
 }

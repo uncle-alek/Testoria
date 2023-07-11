@@ -260,15 +260,54 @@ final class UseCaseTests: XCTestCase {
             )
         }
     }
+    
+    func test_get_available_actions() throws {
+        let sut = makeSUT()
+        let actions = sut.getAvailableActions()
+        XCTAssertNoDifference(
+            actions,
+            [
+                .tap,
+                .swipeLeft,
+                .swipeRight,
+                .swipeUp,
+                .swipeDown,
+                .typeText
+            ]
+        )
+    }
+    
+    func test_get_available_elements() throws {
+        let sut = makeSUT(
+            elements: [
+                Element(name: "Home banner", id: "element_id_1", type: .view),
+                Element(name: "Banner button", id: "element_id_2", type: .button)
+            ]
+        )
+        let elements = sut.getAvailableElements()
+        XCTAssertNoDifference(
+            elements,
+            [
+                Element(name: "Home banner", id: "element_id_1", type: .view),
+                Element(name: "Banner button", id: "element_id_2", type: .button)
+            ]
+        )
+    }
 }
 
 extension UseCaseTests {
     
-    func makeSUT() -> UseCase {
+    func makeSUT(
+        elements: [Element] = []
+    ) -> UseCase {
         var counter = 0
-        return UseCase {
+        let generateId = {
             counter += 1
             return "uniqueId_\(counter)"
         }
+        return UseCase(
+            elements: elements,
+            generateId: generateId
+        )
     }
 }
