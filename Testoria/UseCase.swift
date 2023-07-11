@@ -4,8 +4,6 @@ import Foundation
 enum UseCaseError: Error, Equatable {
     case recurringSuiteName(String)
     case recurringScenarioName(suiteName: String, scenarioName: String)
-    case suiteNotFound(Suite.Id)
-    case scenarioNotFound(Scenario.Id)
 }
 
 final class UseCase {
@@ -40,9 +38,7 @@ final class UseCase {
         with name: String,
         for suiteId: Suite.Id
     ) throws -> Scenario.Id {
-        guard let suiteIndex = suiteIndex(for: suiteId) else {
-            throw UseCaseError.suiteNotFound(suiteId)
-        }
+        let suiteIndex = suiteIndex(for: suiteId)
         let suite = suites[suiteIndex]
         if isScenarioExist(with: name, for: suite) {
             throw UseCaseError.recurringScenarioName(suiteName: suite.name, scenarioName: name)
@@ -56,9 +52,7 @@ final class UseCase {
         with newName: String,
         for suiteId: Suite.Id
     ) throws {
-        guard let index = suiteIndex(for: suiteId) else {
-            throw UseCaseError.suiteNotFound(suiteId)
-        }
+        let index = suiteIndex(for: suiteId)
         suites[index].name = newName
     }
     
@@ -66,27 +60,21 @@ final class UseCase {
         with newName: String,
         for scenarioId: Scenario.Id
     ) throws {
-        guard let index = scenarioIndex(for: scenarioId) else {
-            throw UseCaseError.scenarioNotFound(scenarioId)
-        }
+        let index = scenarioIndex(for: scenarioId)
         suites[index.suiteIndex].scenarios[index.scenarioIndex].name = newName
     }
     
     func deleteSuite(
         for suiteId: Suite.Id
     ) throws {
-        guard let index = suiteIndex(for: suiteId) else {
-            throw UseCaseError.suiteNotFound(suiteId)
-        }
+        let index = suiteIndex(for: suiteId)
         suites.remove(at: index)
     }
     
     func deleteScenario(
         for scenarioId: Scenario.Id
     ) throws {
-        guard let index = scenarioIndex(for: scenarioId) else {
-            throw UseCaseError.scenarioNotFound(scenarioId)
-        }
+        let index = scenarioIndex(for: scenarioId)
         suites[index.suiteIndex].scenarios.remove(at: index.scenarioIndex)
     }
     
@@ -95,9 +83,7 @@ final class UseCase {
         and element: Element,
         for scenarioId: Scenario.Id
     ) throws {
-        guard let index = scenarioIndex(for: scenarioId) else {
-            throw UseCaseError.scenarioNotFound(scenarioId)
-        }
+        let index = scenarioIndex(for: scenarioId)
         let step = Step(action: action, element: element)
         suites[index.suiteIndex].scenarios[index.scenarioIndex].steps.append(step)
     }
@@ -125,8 +111,8 @@ private extension UseCase {
     
     func suiteIndex(
         for suiteId: Suite.Id
-    ) -> Int? {
-        return suites.firstIndex(where: { $0.id == suiteId })
+    ) -> Int {
+        return suites.firstIndex(where: { $0.id == suiteId })!
     }
     
     func isScenarioExist(
@@ -138,11 +124,9 @@ private extension UseCase {
     
     func scenarioIndex(
         for scenarioId: Scenario.Id
-    ) -> (suiteIndex: Int, scenarioIndex: Int)? {
-        guard let suiteIndex = suiteIndex(for: .id(scenarioId.suiteId)),
-           let scenarioIndex = suites[suiteIndex].scenarios.firstIndex(where: { $0.id == scenarioId }) else {
-            return nil
-        }
+    ) -> (suiteIndex: Int, scenarioIndex: Int) {
+        let suiteIndex = suiteIndex(for: .id(scenarioId.suiteId))
+        let scenarioIndex = suites[suiteIndex].scenarios.firstIndex(where: { $0.id == scenarioId })!
         return (suiteIndex, scenarioIndex)
     }
 }
