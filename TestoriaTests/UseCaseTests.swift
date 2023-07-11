@@ -293,6 +293,34 @@ final class UseCaseTests: XCTestCase {
             ]
         )
     }
+    
+    func test_add_step_to_scenario() throws {
+        let sut = makeSUT(
+            elements: [
+                Element(name: "Home banner", id: "element_id_1", type: .view),
+                Element(name: "Banner button", id: "element_id_2", type: .button)
+            ]
+        )
+        let suiteId = try sut.addSuite(with: "Home screen")
+        let scenarioId = try sut.addScenario(with: "Show welcome message", for: suiteId)
+        let actions = sut.getAvailableActions()
+        let elements = sut.getAvailableElements()
+        try sut.addStep(with: actions[0], and: elements[0], for: scenarioId)
+        try sut.addStep(with: actions[1], and: elements[1], for: scenarioId)
+        XCTAssertNoDifference(
+            sut.buildSuites()[0].scenarios[0].steps,
+            [
+                Step(
+                    action: actions[0],
+                    element: elements[0]
+                ),
+                Step(
+                    action: actions[1],
+                    element: elements[1]
+                )
+            ]
+        )
+    }
 }
 
 extension UseCaseTests {

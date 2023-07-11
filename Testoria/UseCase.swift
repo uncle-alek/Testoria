@@ -90,6 +90,18 @@ final class UseCase {
         suites[index.suiteIndex].scenarios.remove(at: index.scenarioIndex)
     }
     
+    func addStep(
+        with action: Action,
+        and element: Element,
+        for scenarioId: Scenario.Id
+    ) throws {
+        guard let index = scenarioIndex(for: scenarioId) else {
+            throw UseCaseError.scenarioNotFound(scenarioId)
+        }
+        let step = Step(action: action, element: element)
+        suites[index.suiteIndex].scenarios[index.scenarioIndex].steps.append(step)
+    }
+    
     func getAvailableActions() -> [Action] {
         return Action.allCases
     }
@@ -176,14 +188,22 @@ struct Scenario: Equatable {
     
     var id: Id
     var name: String
+    var steps: [Step]
     
     init(
         _ id: Id,
-        name: String
+        name: String,
+        steps: [Step] = []
     ) {
         self.id = id
         self.name = name
+        self.steps = steps
     }
+}
+
+struct Step: Equatable {
+    let action: Action
+    let element: Element
 }
 
 enum Action: CaseIterable, Equatable {
